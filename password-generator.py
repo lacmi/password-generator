@@ -4,36 +4,39 @@ import argparse
 import pyperclip
 
 
-alphanumeric = string.ascii_letters + string.digits
-allCharacters = alphanumeric + string.punctuation
 default_length = 20
 
 
-def generate_password(length):
+def generate_password(length, spl_chars):
+    characters = string.ascii_letters + string.digits
+    if spl_chars:
+        characters += string.punctuation
     while True:
-        password = ''.join(secrets.choice(allCharacters) for x in range(length))
-        if(any(c.islower() for c in password)
-                and any(c.isupper() for c in password)
-                and any(c.isdigit() for c in password)
-                and any(c in string.punctuation for c in password)):
-            break
+        password = ''.join(secrets.choice(characters) for x in range(length))
+        if(any(c.islower() for c in password) and any(c.isupper() for c in password) and any(c.isdigit() for c in password)):
+            if spl_chars:
+                if(any(c in string.punctuation for c in password)):
+                    break
+            else:
+                break
     return password
 
-def positive(length):
+def fourplus(length):
     try:
         i = int(length)
     except ValueError:
         raise argparse.ArgumentTypeError("length must be an integer")
-    if i < 1:
-        raise argparse.ArgumentTypeError("length must be at least 1")
+    if i < 4:
+        raise argparse.ArgumentTypeError("length must be at least 4")
     return i
 
 
 parser = argparse.ArgumentParser(description="password generator")
-parser.add_argument("-l", "--length", type=positive, default=default_length, help="specify the length of the password")
+parser.add_argument("-l", "--length", type=fourplus, default=default_length, help="specify the length of the password")
+parser.add_argument("-a", "--alphanumeric", action="store_false", help="only alphanumeric characters")
 
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    password = generate_password(args.length)
+    password = generate_password(args.length, args.alphanumeric)
     pyperclip.copy(password)
