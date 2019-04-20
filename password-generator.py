@@ -31,7 +31,7 @@ def fourplus(length):
     return i
 
 
-parser = argparse.ArgumentParser(description="password generator")
+parser = argparse.ArgumentParser(description="generates a password and copies it to the clipboard")
 parser.add_argument("-l", "--length", type=fourplus, default=default_length, help="specify the length of the password")
 parser.add_argument("-a", "--alphanumeric", action="store_false", help="only alphanumeric characters")
 parser.add_argument("-p", "--print", action="store_true", help="print the password instead of copying it to the clipboard")
